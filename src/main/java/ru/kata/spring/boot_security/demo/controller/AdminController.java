@@ -32,7 +32,7 @@ public class AdminController {
         List<User> list = userService.usersList();
         model.addAttribute("usersList", list);
         model.addAttribute("newUser", new User());
-        model.addAttribute("newRole", new Role());
+        model.addAttribute("listRoles", roleService.findAll());
         model.addAttribute("authUser", user);
         model.addAttribute("allUsers", list);
         return "users";
