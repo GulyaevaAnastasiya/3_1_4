@@ -70,16 +70,21 @@
                 <strong><label for="password">Enter password: </label></strong>
                 <input type="password" th:field="*{password}" id="password" class="form-control" style="background-color: whitesmoke"/>
 
-                <strong><label for="Role">Role: </label></strong>
-                <select th:field="*{roles}" multiple class="custom-select" id="Role" style="background-color: whitesmoke">
-                    <option th:each="role: ${listRoles}" th:value="${role.id}" th:text="${role.name.substring(5)}"></option>
-                </select>
+<!--                <strong><label for="Role">Role: </label></strong>-->
+<!--                <select th:field="*{roles}" multiple class="custom-select" id="Role" style="background-color: whitesmoke">-->
+<!--                    <option th:each="role: ${listRoles}" th:value="${role.id}" th:text="${role.name}"></option>-->
+<!--                </select>-->
+                <label> Role:
+                    <select size="2" multiple name="roles">
+                        <option selected="selected" value="1">USER</option>
+                        <option value="2">ADMIN</option>
+                    </select>
+                </label>
+
                 <br/>
                 <br/>
                 <button class="btn btn-success" type="submit" value="Add new user">Add new user</button>
-                </td>
                 <button class="btn btn-success"type="reset" value="Clear">Clear</button>
-                </td>
             </form>
         </div>
         <div role="tabpanel" id="userPage" class="tab-pane">
@@ -204,6 +209,23 @@
                                                                        th:name="Password"
                                                                        th:value="${user.getPassword()}" id="newPassword">
                                                             </div>
+
+                                                            <div class="form-group text-center font-weight-bold">
+<!--                                                            <label for="Role" class="form-control-label"> Roles-->
+<!--                                                                <th:block th:each="role: ${listRoles}">-->
+<!--                                                                    <input type="checkbox" th:name="roles" th:field="*{roles}"-->
+<!--                                                                           th:text="${role.name}" th:value="${role.id}"/>-->
+<!--                                                                </th:block>-->
+<!--                                                            </label>-->
+                                                                <label> Role:
+                                                                    <select size="2" multiple name="roles">
+                                                                        <option selected="selected" value="1">USER</option>
+                                                                        <option value="2">ADMIN</option>
+                                                                    </select>
+                                                                </label>
+                                                            </div>
+
+                                                            </br>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
