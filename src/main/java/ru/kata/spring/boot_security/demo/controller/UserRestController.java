@@ -9,26 +9,26 @@ import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 import java.security.Principal;
 
+
 @Controller
-public class UserController {
+public class UserRestController {
+    private final UserServiceImpl userServiceImpl;
 
-    private UserServiceImpl userService;
-
-    public UserController(UserServiceImpl userService) {
-        this.userService = userService;
+    public UserRestController(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
-
 
     @GetMapping("/user")
     public String showUser(@RequestParam(name = "id", required = false) Long id, Model model, Principal principal) {
         User user;
         if (id != null) {
-            user = userService.getUser(id);
+            user = userServiceImpl.getUser(id);
         } else {
             String username = principal.getName();
-            user = userService.findByUsername(username);
+            user = userServiceImpl.findByUsername(username);
         }
         model.addAttribute("user", user);
         return "user";
     }
+
 }
