@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 import java.util.List;
@@ -18,11 +19,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final UserServiceImpl userService;
 
-    public AdminController(RoleRepository roleRepository, UserServiceImpl userService) {
-        this.roleRepository = roleRepository;
+    public AdminController(RoleService roleService, UserServiceImpl userService) {
+        this.roleService = roleService;
         this.userService = userService;
     }
 
@@ -38,25 +39,17 @@ public class AdminController {
     }
 
 
-    @GetMapping("/edit")
-    public String edit(@RequestParam("id") Long id, Model model) {
-        User user = userService.getUser(id);
-        model.addAttribute("editUser", user);
-        userService.update(user, (List<Role>) user.getRoles());
-        return "redirect:/admin";
-    }
-
-
     @PostMapping("/add")
     public String addUser(@ModelAttribute("newUser") User user,
-                          @ModelAttribute("newRole") Role role) {
+                          Model model) {
+        model.addAttribute("listRoles", roleService.findAll());
         userService.add(user);
         return "redirect:/admin";
     }
 
     @PostMapping ("/save")
-    public String save(User user, @ModelAttribute("newRole") Role role){
-        userService.update(user, (List<Role>) role);
+    public String save(@RequestParam("id") Long id, @ModelAttribute ("newUser") User user){
+        userService.update(id, user);
         return "redirect:/admin";
     }
 

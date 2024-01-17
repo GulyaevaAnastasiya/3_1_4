@@ -10,6 +10,7 @@ import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collection;
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void add(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            System.out.println("User already exists");
+            throw new EntityExistsException(String.format("User with name: %s is already exist", user.getName()));
         } else {
             createRolesIfNotExist();
             user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -59,12 +60,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void update(User user, Collection<Role> roles) {
-//        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-//            throw new EntityNotFoundException("User with name " + user.getName() + " is already exist");
-//        } else {
-            userRepository.save(user);
-//        }
+    public void update(Long id, User user) {
+        User currentUser = userRepository.findById(id)
+                .orElseThrow(() -> new EntityExistsException(String.format("User with id: %s not found", id)));
+        if (currentUser.getUsername().equals(user.getUsername()) && !currentUser.getId().equals(id)) {
+            throw new EntityExistsException(String.format("User with name: %s is already exist", user.getName()));
+        }
+        if (user.getPassword().isBlank() && !user.getPassword().equals(currentUser.getPassword())) {
+            currentUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        currentUser.setName(user.getName());
+        currentUser.setEmail(user.getEmail());
+        currentUser.setPhoneNumber(user.getPhoneNumber());
+        currentUser.setRoles(user.getRoles());
     }
 
     @Override
@@ -81,10 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        if (userRepository.findByUsername(username).isEmpty()) {
-            throw new EntityNotFoundException("User not found");
-        } else {
-            return userRepository.findByUsername(username).get();
-        }
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with name %s not found", username)));
     }
 }
